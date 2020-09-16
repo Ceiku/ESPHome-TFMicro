@@ -1,0 +1,53 @@
+esphome:
+  name: tfmicro_hello_world
+  platform: ESP32
+  board: nodemcu-32s
+  libraries:
+    - eloquentarduino/EloquentTinyMl
+  includes:
+    - model.h
+    - tfmicro_component.h
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_psw
+  
+  manual_ip:
+    static_ip: 192.168.0.101
+    subnet: 255.255.255.0
+    gateway: 192.168.0.1
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Adcp Test Fallback Hotspot"
+    password: "w2D5Di71pia6"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_psw
+
+ota:
+  password: !secret ota_psw
+
+# custom_component:
+# - lambda: |-
+#     auto tfmicro = new TFMicroComponent();
+#     return {tfmicro};
+
+sensor:
+ - platform: custom
+   lambda: |-
+      auto tfmicro = new TFMicroComponent();
+      App.register_component(tfmicro);
+      return {tfmicro->sensor_x_, tfmicro->sensor_y_};
+
+   sensors:
+     - name: "x"
+       accuracy_decimals: 3
+     - name: "y"
+       accuracy_decimals: 3
